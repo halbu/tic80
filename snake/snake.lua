@@ -13,11 +13,12 @@ player={
 	{x=3, y=2},
 	{x=4, y=2},
 }
-plength=3
 ateThisTurn=false
 playing=true
 bgColor=8
 TILE_SIZE=8
+score=0
+framesPerTick=9
 
 function TIC()
 	-- input handling
@@ -30,8 +31,9 @@ function TIC()
 	testCollision()
 	spawnApple()
 
-	if (playing) then c=c+1 end
-	if (c>8) then
+	if playing then c=c+1 end
+	
+	if (c>framesPerTick) then
 		c=0
 		movePlayer()
 	end
@@ -45,19 +47,35 @@ end
 
 function testCollision()
 	head = player[#player]
+	
+	-- test eating apple
 	if (head.x==apple.x and head.y==apple.y) then
 		apple.x=-1
+		score=score+1
+		if (score%10==0 and framesPerTick>3) then
+			framesPerTick=framesPerTick-1
+		end
 		ateThisTurn=true
 	end
 	
+	-- test for collision against self
 	for i, item in pairs(player) do
 		if (item~=head) then
 			if (item.x==head.x and item.y==head.y) then
-				playing=false
-				bgColor=1
+				endGame()
 			end
 		end
 	end
+	
+	-- test for collision against boundaries of play area
+	if (head.x==0 or head.x==29 or head.y==0 or head.y==16) then
+		endGame()
+	end
+end
+
+function endGame()
+	playing=false
+	bgColor=1
 end
 
 function drawPlayer()
@@ -100,8 +118,10 @@ function movePlayer()
 	if dir==3 then px=px-1 end
 	
 	table.insert(player, {x=px, y=py})
+	
 	if (ateThisTurn==false) then
 		table.remove(player, 1)
 	end
+	
 	ateThisTurn=false
 end
