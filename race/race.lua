@@ -1,92 +1,128 @@
 -- title:  race
 -- author: halbu
--- desc:   super hang on, but bad
+-- desc:   out run, but bad
 -- script: lua
 
 sw, sh = 240, 136
 
-t_width = 0.8
-e_width = 0.075 -- width of barrier thing on either side
+trackWidth = 0.8
+trueCentre = 0.5
 
-chevron = 0
-chevronWidth = 15
-speed = 2.4
-true_centre = 0.5
+chevronCounter = 0
+chevronLength = 15
+chevronWidth = 0.075 -- width of barrier thing on either side
+
+stripeCounter = 0
+stripeLength = 40
+stripeWidth = 0.02
+
+speed = 0.0
+topSpeed = 3.1
 curve = 0
-curve_dir = 3
-curve_change_speed = 0.005
-max_curve = 0.6
-c_grass = 3
-car_x = sw / 2 - 8
+curveDir = 3
+curveChangeSpeed = 0.005
+maxCurve = 0.6
+grassColor, roadColor = 3, 2
+car_x = 0.5
+xv = 0
+dir = 0
+turnSpeed = 0.0005
+maxTurnSpeed = 0.0125
+horizon = sh/2
 
 -- aliases as these improve performance somehow?
 sin = math.sin
 flr = math.floor
 
 function TIC()
+ if speed < topSpeed then speed = speed + 0.01 end
 	cls()
- cfloor = flr(chevron)
+ cfloor = flr(chevronCounter)
+ sfloor = flr(stripeCounter)
  
  updateCurve()
  carDrift()
  drawTrack()
  handleInput()
  
-	spr(0, car_x, 112, 7, 1, 0, 0, 2, 2)
+	spr(dir, car_x * sw - 16, 100, 7, 2, 0, 0, 2, 2)
 
-	chevron=chevron+speed
-	if chevron>chevronWidth then chevron=chevron-chevronWidth end
+	chevronCounter=chevronCounter+speed
+	if chevronCounter>chevronLength then chevronCounter=chevronCounter-chevronLength end
+
+	stripeCounter=stripeCounter+speed
+	if stripeCounter>stripeLength then stripeCounter=stripeCounter-stripeLength end
 end
 
 function carDrift()
- car_x = car_x - curve*3
+ car_x = car_x - ((curve/50) * speed) / topSpeed
 end
 
 function updateCurve()
  if math.random(1, 30) == 1 then
-  curve_dir = math.random(1, 3)
+  curveDir = math.random(1, 3)
  end
 
- if curve_dir == 1 then
-  curve = curve - curve_change_speed
- elseif curve_dir == 2 then
-  curve = curve + curve_change_speed
+ if curveDir == 1 then
+  curve = curve - curveChangeSpeed
+ elseif curveDir == 2 then
+  curve = curve + curveChangeSpeed
  end
 
- if curve < -max_curve then curve = -max_curve end
- if curve > max_curve then curve = max_curve end
+ if curve < -maxCurve then curve = -maxCurve end
+ if curve > maxCurve then curve = maxCurve end
 end
 
 function handleInput()
- if btn(2) then car_x = car_x - 2 end
- if btn(3) then car_x = car_x + 2 end
+ xv = xv * 0.96
+	dir = 0
+ if btn(2) then
+  xv = xv - turnSpeed
+ end
+ if btn(3) then
+  xv = xv + turnSpeed
+  dir = 4
+ end
+ if xv > maxTurnSpeed then xv = maxTurnSpeed end
+ if xv < -maxTurnSpeed then xv = -maxTurnSpeed end
+ car_x = car_x + xv
+ if xv > 0.004 then dir = 4 end
+ if xv < -0.004 then dir = 2 end
 end
 
 function drawTrack()
- rect(0, sh/2, sw, sh/2, c_grass)
+ rect(0, horizon, sw, horizon, grassColor)
 	
- for j=sh/2,sh do
-  ccol = 1
-  if (j-cfloor)%chevronWidth < 6 then ccol = 15 end
+ for j=horizon,sh do
+  chevronColor, stripeColor = 1, 2
+  if (j-cfloor) % chevronLength < 6 then chevronColor = 15 end
+  if (j-sfloor) % stripeLength < 14 then stripeColor = 15 end
   
-  persp_sqz = (j - sh/2) / (sh/2) -- perspective squeeze
-  curv_amount = (0.5 - ((j - sh/2) / (sh))) * 1.8 -- curvature squeeze
+  persp_sqz = (j - horizon) / horizon -- perspective squeeze
+  curv_amount = (0.5 - ((j - horizon) / (sh))) * 1.8 -- curvature squeeze
 
-  centre = true_centre + (curve * (curv_amount^2))
+  centre = trueCentre + (curve * curv_amount^2)
 
-  t_left=centre-(t_width/2) * persp_sqz
-  t_right=centre+(t_width/2) * persp_sqz
-  e_left=t_left-e_width * persp_sqz
-  e_right=t_right+e_width * persp_sqz
+  t_left = centre - (trackWidth / 2) * persp_sqz
+  t_right = centre + (trackWidth / 2) * persp_sqz
+  e_left = t_left - chevronWidth * persp_sqz
+  e_right = t_right + chevronWidth * persp_sqz
+
+  stripe_left=centre-(stripeWidth/2) * persp_sqz
+  stripe_right=centre+(stripeWidth/2) * persp_sqz
 
   for i=0,sw do
-   if i>=(t_left*sw) and i<=(t_right*sw) then
-    pix(i,j,2)
+   if i>=(stripe_left*sw) and i<=(stripe_right*sw) then
+    pix(i,j,stripeColor)
+   elseif i>=(t_left*sw) and i<=(t_right*sw) then
+    pix(i,j,roadColor)
    elseif i>(e_left*sw) and (i<t_left*sw) then
-    pix(i,j,ccol)
+    pix(i,j,chevronColor)
    elseif i>(t_right*sw) and (i<e_right*sw) then
-    pix(i,j,ccol)
+    pix(i,j,chevronColor)
    end
   end
+		
+		print(flr(speed * 36)..'mph', 2, 2, 15, true, 1, false)
  end
 end
