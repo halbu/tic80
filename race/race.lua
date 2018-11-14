@@ -36,7 +36,7 @@ flr = math.floor
 
 function TIC()
  if speed < topSpeed then speed = speed + 0.01 end
-	cls()
+ cls()
  cfloor = flr(chevronCounter)
  sfloor = flr(stripeCounter)
  
@@ -45,13 +45,13 @@ function TIC()
  drawTrack()
  handleInput()
  
-	spr(dir, car_x * sw - 16, 100, 7, 2, 0, 0, 2, 2)
+ spr(dir, car_x * sw - 16, 100, 7, 2, 0, 0, 2, 2)
 
-	chevronCounter=chevronCounter+speed
-	if chevronCounter>chevronLength then chevronCounter=chevronCounter-chevronLength end
+ chevronCounter=chevronCounter+speed
+ if chevronCounter>chevronLength then chevronCounter=chevronCounter-chevronLength end
 
-	stripeCounter=stripeCounter+speed
-	if stripeCounter>stripeLength then stripeCounter=stripeCounter-stripeLength end
+ stripeCounter=stripeCounter+speed
+ if stripeCounter>stripeLength then stripeCounter=stripeCounter-stripeLength end
 end
 
 function carDrift()
@@ -93,36 +93,36 @@ end
 function drawTrack()
  rect(0, horizon, sw, horizon, grassColor)
 	
- for j=horizon,sh do
+ for j = horizon, sh do
   chevronColor, stripeColor = 1, 2
-  if (j-cfloor) % chevronLength < 6 then chevronColor = 15 end
-  if (j-sfloor) % stripeLength < 14 then stripeColor = 15 end
+  if (j - cfloor) % chevronLength < 6 then chevronColor = 15 end
+  if (j - sfloor) % stripeLength < 14 then stripeColor = 15 end
   
-  persp_sqz = (j - horizon) / horizon -- perspective squeeze
-  curv_amount = (0.5 - ((j - horizon) / (sh))) * 1.8 -- curvature squeeze
+  perspSqz = (j - horizon) / horizon -- perspective squeeze
+  curveAmount = (0.5 - (j - horizon) / (sh)) * 1.8 -- curvature squeeze
 
-  centre = trueCentre + (curve * curv_amount^2)
+  centre = trueCentre + (curve * curveAmount ^ 2)
 
-  t_left = centre - (trackWidth / 2) * persp_sqz
-  t_right = centre + (trackWidth / 2) * persp_sqz
-  e_left = t_left - chevronWidth * persp_sqz
-  e_right = t_right + chevronWidth * persp_sqz
+  trackLeft = centre - (trackWidth / 2) * perspSqz
+  trackRight = centre + (trackWidth / 2) * perspSqz
+  chevronLeft = trackLeft - chevronWidth * perspSqz
+  chevronRight = trackRight + chevronWidth * perspSqz
 
-  stripe_left=centre-(stripeWidth/2) * persp_sqz
-  stripe_right=centre+(stripeWidth/2) * persp_sqz
+  stripeLeft = centre - (stripeWidth / 2) * perspSqz
+  stripeRight = centre + (stripeWidth / 2) * perspSqz
 
-  for i=0,sw do
-   if i>=(stripe_left*sw) and i<=(stripe_right*sw) then
-    pix(i,j,stripeColor)
-   elseif i>=(t_left*sw) and i<=(t_right*sw) then
-    pix(i,j,roadColor)
-   elseif i>(e_left*sw) and (i<t_left*sw) then
-    pix(i,j,chevronColor)
-   elseif i>(t_right*sw) and (i<e_right*sw) then
-    pix(i,j,chevronColor)
+  for i = 0, sw do
+   if i >= (stripeLeft * sw) and i <= (stripeRight * sw) then
+    pix(i, j, stripeColor)
+   elseif i >= (trackLeft * sw) and i <= (trackRight * sw) then
+    pix(i, j, roadColor)
+   elseif i > (chevronLeft * sw) and (i < trackLeft * sw) then
+    pix(i, j, chevronColor)
+   elseif i > (trackRight * sw) and (i < chevronRight * sw) then
+    pix(i, j, chevronColor)
    end
   end
 		
-		print(flr(speed * 36)..'mph', 2, 2, 15, true, 1, false)
+  print(flr(speed * 36)..'mph', 2, 2, 15, true, 1, false)
  end
 end
