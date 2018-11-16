@@ -24,6 +24,7 @@ dir = 0
 turnSpeed = 0.0005
 maxTurnSpeed = 0.0125
 horizon = sh / 2
+horizonXOffset = 0
 
 -- aliases as these improve performance somehow?
 sin, flr = math.sin, math.floor
@@ -69,11 +70,12 @@ function updateCurve()
 
  if curve < -maxCurve then curve = -maxCurve end
  if curve > maxCurve then curve = maxCurve end
+ horizonXOffset = horizonXOffset - (curve / 6)
 end
 
 function handleInput()
  xv = xv * 0.96
-	dir = 0
+ dir = 0
  if btn(2) then
   xv = xv - turnSpeed
  end
@@ -94,8 +96,8 @@ function drawTrack()
  rect(0, horizon - 4, sw, 2, 9)
  rect(0, horizon - 6, sw, 2, 10)
 	
- spr(8, 20, horizon - 32, 7, 1, 0, 0, 4, 4)
- spr(8, 150, horizon - 64, 7, 2, 1, 0, 4, 4)
+ spr(8, 20 + horizonXOffset, horizon - 32, 7, 1, 0, 0, 4, 4)
+ spr(8, 150 + horizonXOffset, horizon - 64, 7, 2, 1, 0, 4, 4)
 	
  for j = horizon, sh do
   chevronColor, stripeColor = 1, roadColor
