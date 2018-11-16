@@ -23,7 +23,7 @@ xv = 0
 dir = 0
 turnSpeed = 0.0005
 maxTurnSpeed = 0.0125
-horizon = sh/2
+horizon = sh / 2
 
 -- aliases as these improve performance somehow?
 sin, flr = math.sin, math.floor
@@ -89,14 +89,14 @@ function handleInput()
 end
 
 function drawTrack()
- rect(0, horizon, sw, horizon, grassColor)
+ rect(0, horizon, sw, sh - horizon, grassColor)
 	
  for j = horizon, sh do
   chevronColor, stripeColor = 1, 2
   if (j - cfloor) % chevronLength < 6 then chevronColor = 15 end
   if (j - sfloor) % stripeLength < 14 then stripeColor = 15 end
   
-  perspSqz = (j - horizon) / horizon -- perspective squeeze
+  perspSqz = (j - horizon + 2) / (sh - horizon) -- perspective squeeze
   curveAmount = (0.5 - (j - horizon) / (sh)) * 1.8 -- curvature squeeze
 
   centre = trueCentre + (curve * curveAmount ^ 2)
@@ -105,7 +105,6 @@ function drawTrack()
   trackRight = centre + (trackWidth / 2) * perspSqz
   chevronLeft = trackLeft - chevronWidth * perspSqz
   chevronRight = trackRight + chevronWidth * perspSqz
-
   stripeLeft = centre - (stripeWidth / 2) * perspSqz
   stripeRight = centre + (stripeWidth / 2) * perspSqz
 
