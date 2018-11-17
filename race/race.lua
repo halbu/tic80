@@ -28,6 +28,7 @@ horizonXOffset = 0
 
 bollards = {}
 dist = 0
+timer = 3600
 
 -- aliases as these improve performance somehow?
 sin, flr = math.sin, math.floor
@@ -41,6 +42,7 @@ function TIC()
  carDrift()
  updateTrack()
  drawTrack()
+ drawGui()
  handleInput()
  
  spr(dir, carX * sw - 16, 100, 7, 2, 0, 0, 2, 2)
@@ -62,6 +64,8 @@ function TIC()
   table.insert(bollards, bollard)
  end
  if dist > 100 then dist = dist - 100 end
+
+ timer = timer - 1
 end
 
 function carDrift()
@@ -82,6 +86,7 @@ function updateTrack()
  if curve < -maxCurve then curve = -maxCurve end
  if curve > maxCurve then curve = maxCurve end
 
+ trace('speed '..speed)
  horizonXOffset = horizonXOffset - (curve / 6) -- scroll horizon
  for k,v in pairs(bollards) do
   v.y = v.y + (speed / 2)
@@ -136,44 +141,50 @@ function drawTrack()
   line(chevronLeft * sw, j, trackLeft * sw, j, chevronColor)
   line(trackRight * sw, j, chevronRight * sw, j, chevronColor)
 
-  -- TODO: cache per-scanline curve and perspective values & iterate bollards
-  -- once per frame rather than once per scanline
-  brkPt1 = (horizon + ((sh-horizon)/5)*1)
-  brkPt2 = (horizon + ((sh-horizon)/5)*3)
+  brkPt1 = (horizon + ((sh-horizon)/10)*2)
+  brkPt2 = (horizon + ((sh-horizon)/10)*4)
+  brkPt3 = (horizon + ((sh-horizon)/10)*6)
+  brkPt4 = (horizon + ((sh-horizon)/10)*8)
 
   for k, v in pairs(bollards) do
    ground = sh - horizon
    if flr(v.y) == j then
     bollardLeft = chevronLeft - (0.1 * perspSqz)
     bollardRight = chevronRight + (0.1 * perspSqz)
-    if v.y > brkPt2 then
-     rect(bollardLeft * sw, j-8, 2, 8, 15)
-     rect(bollardLeft * sw, j-4, 2, 2, 0)
-     rect(bollardLeft * sw, j-8, 2, 2, 8)
-     rect(bollardRight * sw, j-8, 2, 8, 15)
-     rect(bollardRight * sw, j-4, 2, 2, 0)
-     rect(bollardRight * sw, j-8, 2, 2, 8)
+    if v.y > brkPt4 then
+     drawBollardPair(bollardLeft, bollardRight, v.y, 3)
+    elseif v.y > brkPt3 then
+      drawBollardPair(bollardLeft, bollardRight, v.y, 2.5)
+    elseif v.y > brkPt2 then
+     drawBollardPair(bollardLeft, bollardRight, v.y, 2)
     elseif v.y > brkPt1 then
-     line(bollardLeft * sw, j, bollardLeft * sw, j - 5, 15)
-     line(bollardLeft * sw, j - 1, bollardLeft * sw, j - 2, 0)
-     line(bollardLeft * sw, j - 4, bollardLeft * sw, j - 5, 8)
-     line(bollardRight * sw, j, bollardRight * sw, j - 5, 15)
-     line(bollardRight * sw, j - 1, bollardRight * sw, j - 2, 0)
-     line(bollardRight * sw, j - 4, bollardRight * sw, j - 5, 8)
+     drawBollardPair(bollardLeft, bollardRight, v.y, 1.5)
     elseif v.y > horizon then
-     line(bollardLeft * sw, j, bollardLeft * sw, j - 3, 15)
-     pix(bollardLeft * sw, j - 1, 0)
-     pix(bollardLeft * sw, j - 3, 8)
-     line(bollardRight * sw, j, bollardRight * sw, j - 3, 15)
-     pix(bollardRight * sw, j - 1, 0)
-     pix(bollardRight * sw, j - 3, 8)
+     drawBollardPair(bollardLeft, bollardRight, v.y, 1)
     end
    end
   end
  end
-		
- print(flr(speed * 36)..'mph', 2, 2, 15, true, 1, false)
 end
+
+function drawBollardPair(l, r, y, s)
+ drawBollard(l, y, s)
+ drawBollard(r, y, s)
+end
+
+function drawBollard(x, y, s)
+ rect(x * sw, y - s * 4, s, s * 4, 15)
+ rect(x * sw, y - s * 2, s, s, 0)
+ rect(x * sw, y - s * 4, s, s, 8)
+end
+
+function drawGui()
+ print(flr(speed * 36)..'mph', 2, 2, 15, true, 1, false)
+ tw = print(flr(timer/60), 100, -60, 14, true, 2, false)
+ print(flr(timer/60), sw / 2 - (tw / 2), 2, 14, true, 2, false)
+ print(flr(timer/60), sw / 2 - (tw / 2) + 1, 3, 15, true, 2, false)
+end
+
 -- <TILES>
 -- 000:7777777777777777777777777777777777777777777777777776666677610000
 -- 001:7777777777777777777777777777777777777777777777776666677700000677
