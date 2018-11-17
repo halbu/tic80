@@ -86,7 +86,6 @@ function updateTrack()
  if curve < -maxCurve then curve = -maxCurve end
  if curve > maxCurve then curve = maxCurve end
 
- trace('speed '..speed)
  horizonXOffset = horizonXOffset - (curve / 6) -- scroll horizon
  for k,v in pairs(bollards) do
   v.y = v.y + (speed / 2)
@@ -181,8 +180,8 @@ end
 function drawGui()
  print(flr(speed * 36)..'mph', 2, 2, 15, true, 1, false)
  tw = print(flr(timer/60), 100, -60, 14, true, 2, false)
- print(flr(timer/60), sw / 2 - (tw / 2), 2, 14, true, 2, false)
- print(flr(timer/60), sw / 2 - (tw / 2) + 1, 3, 15, true, 2, false)
+ print(flr(timer/60), sw / 2 - (tw / 2) - 1, 2, 14, true, 2, false)
+ print(flr(timer/60), sw / 2 - (tw / 2), 3, 15, true, 2, false)
 end
 
 -- <TILES>
