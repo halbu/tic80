@@ -37,6 +37,19 @@ sin, flr = math.sin, math.floor
 twoPi = 2 * math.pi
 
 function TIC()
+ -- engine hum
+ pitch = (speed / topSpeed) * 24
+ wbl = math.random(0, 1)
+ if math.random(1, 2) == 1 then wbl = -wbl end
+ sfx(0, flr(pitch + wbl), -1, 0, 8, 2)
+
+ -- tyre screech
+ if math.abs(xv) > (maxTurnSpeed * 0.875) and (speed / topSpeed) > 0.8 then
+	 swbl = math.random(0, 2)
+	 if math.random(1, 2) == 1 then swbl = -swbl end
+  sfx(1, 60 + swbl, 2, 1, 8, 2)
+ end
+	
  cls(11)
  cfloor = flr(chevronCounter)
  sfloor = flr(stripeCounter)
@@ -161,10 +174,10 @@ function drawTrack()
   line(chevronLeft * sw, j, trackLeft * sw, j, chevronColor)
   line(trackRight * sw, j, chevronRight * sw, j, chevronColor)
 
-  brkPt1 = (horizon + ((sh-horizon)/10)*1.5)
-  brkPt2 = (horizon + ((sh-horizon)/10)*3)
-  brkPt3 = (horizon + ((sh-horizon)/10)*5)
-  brkPt4 = (horizon + ((sh-horizon)/10)*7)
+  brkPt1 = (horizon + ((sh-horizon) / 10) * 1.5)
+  brkPt2 = (horizon + ((sh-horizon) / 10) * 3)
+  brkPt3 = (horizon + ((sh-horizon) / 10) * 5)
+  brkPt4 = (horizon + ((sh-horizon) / 10) * 7)
 
   for k, v in pairs(bollards) do
    if flr(v.y) == j then
@@ -296,6 +309,11 @@ end
 -- 001:0123456789abcdeffedcba9876543210
 -- 002:0123456789abcdef0123456789abcdef
 -- </WAVES>
+
+-- <SFX>
+-- 000:700870087008700870087008700870087008700870087008700870087008700870087008700870087008700870087008700870087008700870087008040000000000
+-- 001:a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000a000300000000000
+-- </SFX>
 
 -- <PALETTE>
 -- 000:140c1c44243430346d4e4a4e854c30346524d04648757161a51818a114616918a524246d0430000c3808aeaaaedeeed6
