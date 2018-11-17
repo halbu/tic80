@@ -136,8 +136,8 @@ function drawTrack()
   line(chevronLeft * sw, j, trackLeft * sw, j, chevronColor)
   line(trackRight * sw, j, chevronRight * sw, j, chevronColor)
 
-  # TODO: cache per-scanline curve and perspective values & iterate bollards
-  # once per frame rather than once per scanline
+  -- TODO: cache per-scanline curve and perspective values & iterate bollards
+  -- once per frame rather than once per scanline
   brkPt1 = (horizon + ((sh-horizon)/5)*1)
   brkPt2 = (horizon + ((sh-horizon)/5)*3)
 
