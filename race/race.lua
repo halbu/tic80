@@ -149,10 +149,10 @@ function drawTrack()
   line(chevronLeft * sw, j, trackLeft * sw, j, chevronColor)
   line(trackRight * sw, j, chevronRight * sw, j, chevronColor)
 
-  brkPt1 = (horizon + ((sh-horizon)/10)*2)
-  brkPt2 = (horizon + ((sh-horizon)/10)*4)
-  brkPt3 = (horizon + ((sh-horizon)/10)*6)
-  brkPt4 = (horizon + ((sh-horizon)/10)*8)
+  brkPt1 = (horizon + ((sh-horizon)/10)*1.5)
+  brkPt2 = (horizon + ((sh-horizon)/10)*3)
+  brkPt3 = (horizon + ((sh-horizon)/10)*5)
+  brkPt4 = (horizon + ((sh-horizon)/10)*7)
 
   for k, v in pairs(bollards) do
    ground = sh - horizon
