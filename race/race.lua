@@ -32,9 +32,9 @@ timer = 3659
 
 -- aliases as these improve performance somehow?
 sin, flr = math.sin, math.floor
+twoPi = 2 * math.pi
 
 function TIC()
- if speed < topSpeed then speed = speed + 0.01 end
  cls(11)
  cfloor = flr(chevronCounter)
  sfloor = flr(stripeCounter)
@@ -78,9 +78,9 @@ function updateTrack()
  end
 
  if curveDir == 1 then
-  curve = curve - curveChangeSpeed
+  curve = curve - (curveChangeSpeed * (speed / topSpeed))
  elseif curveDir == 2 then
-  curve = curve + curveChangeSpeed
+  curve = curve + (curveChangeSpeed * (speed / topSpeed))
  end
 
  if curve < -maxCurve then curve = -maxCurve end
@@ -94,7 +94,12 @@ end
 
 function handleInput()
  xv = xv * 0.96
-	dir = 0
+ dir = 0
+ if btn(0) then
+  if speed < topSpeed then speed = speed + 0.01 end
+ else
+  speed = speed * 0.98
+ end
  if btn(2) then
   xv = xv - turnSpeed
  end
@@ -182,6 +187,30 @@ function drawGui()
  tw = print(flr(timer/60), 100, -60, 14, true, 2, false)
  print(flr(timer/60), sw / 2 - (tw / 2) - 1, 2, 14, true, 2, false)
  print(flr(timer/60), sw / 2 - (tw / 2), 3, 15, true, 2, false)
+
+ cx, cy, cr = sw - 20, 20, 18
+ circb(cx, cy, cr, 15)
+
+ speedometerStartAngle = 135
+
+ -- speedometer outline. i'd cache these values if i wasn't lazy
+ for i = 0, 300, 30 do
+  x1 = math.cos((speedometerStartAngle - 15 + i)/360 * twoPi) * 11 + 0.5
+  x2 = math.cos((speedometerStartAngle - 15 + i)/360 * twoPi) * (cr - 3) + 0.5
+  y1 = math.sin((speedometerStartAngle - 15 + i)/360 * twoPi) * 11 + 0.5
+  y2 = math.sin((speedometerStartAngle - 15 + i)/360 * twoPi) * (cr - 3) + 0.5
+  line(cx + x1, cy + y1, cx + x2, cy + y2, 7)
+ end
+
+ -- speedometer
+ speedoLength = 13
+ speedoAngle = speedometerStartAngle + (speed * 90)
+ dx = math.cos(speedoAngle/360 * twoPi) * speedoLength
+ dy = math.sin(speedoAngle/360 * twoPi) * speedoLength
+ circ(cx, cy, 2, 14)
+ circ(cx, cy, 1, 15)
+ line(cx, cy, cx + dx, cy + dy, 15)
+ pix(cx + dx, cy + dy, 8)
 end
 
 -- <TILES>
