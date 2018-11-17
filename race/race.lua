@@ -39,7 +39,7 @@ function TIC()
  cfloor = flr(chevronCounter)
  sfloor = flr(stripeCounter)
  
- carDrift()
+ carHandling()
  updateTrack()
  drawTrack()
  drawGui()
@@ -68,8 +68,12 @@ function TIC()
  timer = timer - 1
 end
 
-function carDrift()
+function carHandling()
  carX = carX - ((curve/50) * speed) / topSpeed
+
+ if (carX <= trueCentre - (trackWidth / 2)) or (carX >= trueCentre + (trackWidth / 2)) then
+  speed = speed * 0.93
+ end
 end
 
 function updateTrack()
@@ -86,7 +90,7 @@ function updateTrack()
  if curve < -maxCurve then curve = -maxCurve end
  if curve > maxCurve then curve = maxCurve end
 
- horizonXOffset = horizonXOffset - (curve / 6) -- scroll horizon
+ horizonXOffset = horizonXOffset - ((curve / 6) * (speed / topSpeed)) -- scroll horizon
  for k,v in pairs(bollards) do
   v.y = v.y + (speed / 2)
  end
@@ -97,9 +101,9 @@ function handleInput()
  dir = 0
  if btn(0) then
   if speed < topSpeed then speed = speed + 0.01 end
- else
-  speed = speed * 0.98
- end
+ elseif btn(1) then
+  speed = speed * 0.97
+ else speed = speed * 0.99 end
  if btn(2) then
   xv = xv - turnSpeed
  end
