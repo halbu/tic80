@@ -28,7 +28,7 @@ horizonXOffset = 0
 
 bollards = {}
 dist = 0
-timer = 3600
+timer = 3659
 
 -- aliases as these improve performance somehow?
 sin, flr = math.sin, math.floor
