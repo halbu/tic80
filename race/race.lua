@@ -35,8 +35,15 @@ timer = 3659
 -- aliases as these improve performance somehow?
 sin, flr = math.sin, math.floor
 twoPi = 2 * math.pi
+menu = 1
 
 function TIC()
+ if menu == 1 then
+  drawMenu()
+  if btn(4) then menu = 0 end
+  return
+ end
+
  -- engine hum
  pitch = (speed / topSpeed) * 24
  wbl = math.random(0, 1)
@@ -93,6 +100,23 @@ function TIC()
  timer = timer - 1
 end
 
+function drawMenu()
+ cls(11)
+ tx = sw / 2 - 48
+ ty = 20
+ spr(160, tx,      ty,      7, 1, 0, 0, 4, 4)
+ spr(164, tx + 32, ty,      7, 1, 0, 0, 4, 4)
+ spr(168, tx + 64, ty,      7, 1, 0, 0, 4, 4)
+ spr(224, tx,      ty + 32, 7, 1, 0, 0, 2, 2)
+ spr(226, tx + 16, ty + 32, 7, 1, 0, 0, 2, 2)
+ spr(228, tx + 32, ty + 32, 7, 1, 0, 0, 2, 2)
+ spr(230, tx + 48, ty + 32, 7, 1, 0, 0, 2, 2)
+ spr(232, tx + 64, ty + 32, 7, 1, 0, 0, 2, 2)
+ spr(234, tx + 80, ty + 32, 7, 1, 0, 0, 2, 2)
+ drawTextCentredAtPoint("PRESS Z!", sw / 2 - 1, 90 - 1, 9, 2, false)
+ drawTextCentredAtPoint("PRESS Z!", sw / 2, 90, 15, 2, false)
+end
+
 function carHandling()
  carX = carX - ((curve/50) * speed) / topSpeed
 
@@ -127,7 +151,7 @@ end
 function handleInput()
  xv = xv * 0.96
  dir = 0
- if btn(0) then
+ if btn(0) or btn(4) then
   if speed < topSpeed then speed = speed + 0.01 end
  elseif btn(1) then
   speed = speed * 0.97
