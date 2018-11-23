@@ -30,6 +30,7 @@ horizonXOffset = 0
 bollards = {}
 trees = {}
 dist = 0
+totalDist = 0
 timer = 3659
 
 -- aliases as these improve performance somehow?
@@ -81,6 +82,7 @@ function TIC()
 
  pDist = dist
  dist = dist + (speed / 2)
+ totalDist = totalDist + (speed / 2) -- why are there 3 different distance variables
  if (pDist < 60 and dist > 60) or (pDist < 80 and dist > 80) or (pDist < 100 and dist > 100) then
   table.insert(bollards, {y=horizon})
  end
@@ -213,7 +215,7 @@ function drawTrack()
     if v.y > brkPt4 then
      drawBollardPair(bollardLeft, bollardRight, v.y, 3)
     elseif v.y > brkPt3 then
-      drawBollardPair(bollardLeft, bollardRight, v.y, 2.5)
+     drawBollardPair(bollardLeft, bollardRight, v.y, 2.5)
     elseif v.y > brkPt2 then
      drawBollardPair(bollardLeft, bollardRight, v.y, 2)
     elseif v.y > brkPt1 then
@@ -263,6 +265,11 @@ end
 function drawGui()
  drawTextCentredAtPoint(flr(timer/60), sw / 2 - 1, 2, 14, 2, false)
  drawTextCentredAtPoint(flr(timer/60), sw / 2, 2, 15, 2, false)
+ miles = totalDist / 1000
+ displayDist = tonumber(string.format("%.1f", miles)) 
+
+ print("DISTANCE", 2, 2, 15, false, 1, true)
+ print(displayDist.." mi", 2, 9, 15, false, 1, false)
 
  circb(cx, cy, cr, 15)
  drawTextCentredAtPoint(flr(speed * 36)..'mph', cx, cy+cr+5, 15, 1, false)
